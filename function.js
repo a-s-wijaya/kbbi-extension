@@ -41,11 +41,29 @@
             queried[i + 3] == '>'
           ) break;
           else content += queried[i];
-          fetch.innerHTML = content;
+          fetched.innerHTML = content;
         }
-        fetched.innerHTML = content;
+        const searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+        const index = searchHistory.indexOf(content);
+        if (index !== -1) {
+          searchHistory.splice(index, 1);
+        }
+        searchHistory.unshift(content);
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
       })
       .catch(error => console.log(error));
+  }
+
+  const searchHistoryData = JSON.parse(localStorage.getItem('searchHistory')) || [];
+  const historyContainer = document.querySelector('.history-container .col');
+
+  if (searchHistoryData.length != 0) {
+
+    let historyList = '';
+    for (let i = 0; i < searchHistoryData.length; i++) {
+      historyList += `<p>${searchHistoryData[i]}</p>`;
+    }
+    historyContainer.innerHTML = historyList;
   }
 
   await dlay(10);
