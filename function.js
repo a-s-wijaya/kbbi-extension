@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 (async () => {
   let dlay = (time) => {
     return new Promise(resolve => setTimeout(resolve, time));
@@ -46,15 +44,9 @@
           fetch.innerHTML = content;
         }
         fetched.innerHTML = content;
-        const searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
-        searchHistory.push(content);
-        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
       })
       .catch(error => console.log(error));
   }
-
-  const searchHistoryData = JSON.parse(localStorage.getItem('searchHistory')) || [];
-  console.log(searchHistoryData);
 
   await dlay(10);
   const fetched = document.querySelector('.query');
@@ -78,4 +70,3 @@
     }
   })
 })();
->>>>>>> Stashed changes
