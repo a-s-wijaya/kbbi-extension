@@ -8,7 +8,6 @@
       }
       .title-container {
         height: 64px;
-        margin-bottom: 10px;
       }
       .title {
         margin: 20px 0 20px 0;
@@ -50,7 +49,7 @@
       button>span {
         font-size: 13px;
       }
-      .active {
+      .activeBTN {
         transition: .3s;
         border-radius: 8px;
         background-color: white;
@@ -65,60 +64,64 @@
         border-radius: 8px;
         outline: none;
         padding: 4px 80px 5px 10px;
+        width: 70%;
       }
       input::placeholder {
         font-size: 13px;
       }
 
+
+
+      
+      .hidden, .inactivePGS {
+        display: none;
+      }
       .home-container {
         width: 100%;
+      }
+      .empty>p {
         color: #4B4E53;
         font-size: 13px;
       }
       
+
+
+
       .box-container {
         width: 100%;
         text-align: center;
       }
-      .box-container>div>p {
-        padding: 10px 5px 0 5px;
-      }
-      .box-container>div {
-        width: 90%;
-        font-size: 14px;
-        margin-top: 10px;
-        border-radius: 10px;
-        box-shadow: inset 0 0 3px #17A1DE70;
-        display: inline-block;
+      .query {
+        margin-top: 20px;
+        height: 220px;
+        padding: 10px;
+        overflow: scroll;
         text-align: left;
-        overflow-y: scroll;
-        overflow-x: hidden;
       }
-      .box-container>div::-webkit-scrollbar {
+      .query::-webkit-scrollbar {
         width: 5px;
+        height: 0px;
         border-radius: 0 10px 0 0;
+        background: #ececed;
       }
-      .box-container>div::-webkit-scrollbar-corner {
+      .query::-webkit-scrollbar-corner {
         background: transparent;
       }
-      .box-container>div::-webkit-scrollbar-button {
+      .query::-webkit-scrollbar-button {
         background: transparent;
       }
-      .box-container>div::-webkit-scrollbar-track-piece {
+      .query::-webkit-scrollbar-track-piece {
         background: transparent;
       }
-      .box-container>div::-webkit-scrollbar-track {
+      .query::-webkit-scrollbar-track {
         background: transparent;
       }
-      .box-container>div::-webkit-scrollbar-thumb {
-        background: #313f8b90;
+      .query::-webkit-scrollbar-thumb {
         border-radius: 20px;
         margin-left: 5px;
         -webkit-transition: 0.3s;
         transition: 0.3s;
-      }
-      .box-container>div::-webkit-scrollbar-thumb:hover {
-        background: #313f8b;
+        background: #b6b7c6;
       }
 
 
@@ -143,7 +146,7 @@
       <div class="row title-container">
         <div class="col">
           <div class="title">
-            <button>
+            <button id="main_title">
               <b>LihatKata</b>
             </button>
           </div>
@@ -157,47 +160,63 @@
         <div class="row button-container">
           <div class="col">
             <div class="row">
-              <button class="col navButton active" id="beranda">
+              <button class="col navButton activeBTN" id="beranda">
                   <span>Beranda</span>
               </button>
-              <button class="col navButton" id="riwayat">
+              <button class="col navButton inactiveBTN" id="riwayat">
                   <span>Riwayat</span>
               </button>
             </div>
           </div>
         </div>
         
-        <!-- Input Holder -->
-        <div class="row input-container">
-          <div class="col">
-            <div class="input">
-              <input class="col inputHere" placeholder='Cari "kata"'></input>
+        <div class="row box-container">
+          <!-- BERANDA -->
+          <div class="home-container activePGS">
+            <!-- Input Field Holder -->
+            <div class="row">
+              <div class="col">
+                <div class="input">
+                  <input class="col inputHere" id="inputMe" placeholder='Cari "kata"'></input>
+                  <button id="clickMe"><i class="bi bi-search"></i></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Home Holder -->
+            <div class="col empty">
+              <img src="./utils/beranda.png" alt="beranda.png" width="100%">
+              <p>Masukkan kata di kolom cari <br> untuk menampilkan arti kata</p>
+            </div>
+
+            <!-- Query Holder -->
+            <div class="col query hidden">
+            </div>
+          </div>
+
+          <!-- RIWAYAT -->
+          <div class="history-container inactivePGS">
+            <!-- Empty History Holder -->
+            <div class="col empty">
+              <img src="./utils/history.png" alt="history.png" width="100%">
+              <p style="padding: 0; margin-bottom: 5px; font-size: 14px;"><b>Riwayat Kosong</b></p>
+              <p>Mulai isi halaman dengan masukkan <br> kata di kolom cari</p>
+            </div>
+            
+            <!-- Queried History Holder -->
+            <div class="col">
+              
             </div>
           </div>
         </div>
-
-        <!-- Home Holder -->
-        <div class="row home-container">
-          <div class="col" id="home_scope">
-            <img src="./utils/zoom.png" alt="zoom.png" width="100%">
-            <p>Masukkan kata di kolom cari <br> untuk menampilkan arti kata</p>
-          </div>
-        </div>
-
-        <!-- Box Holder -->
-        <div class="row box-container">
-          <div class="col" id="box-content">
-
-          </div>
-        </div>
-
+        
       </div>
     </div>
 
-    <!--  -->
-
+    <!-- Footer -->
+<!-- 
     <div class="footer"><p>@Kompetegram 2023</p>
-    </div>
+    </div> -->
 
     <script src="popup.js"></script>
     <script nonce="iRvRA5CH5bcgkD7RgxMm1w==" src="function.js"></script>
