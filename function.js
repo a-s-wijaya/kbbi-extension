@@ -1,4 +1,5 @@
 (async () => {
+  const dlay = (time) => {return new Promise(resolve => setTimeout(resolve, time));}
   const container = document.querySelector('.container');
   /////////////////////////////////
   // Scrollbar Handler
@@ -9,6 +10,24 @@
     item.addEventListener('mouseout', () => {
       item.classList.remove('scroll-on');
     })
+  })
+
+  /////////////////////////////////
+  // Profile Handler
+  const profileNAV = document.querySelector('#profile-nav');
+  const profileUNO = document.querySelector('#profile-back');
+  const profileBOX = document.querySelector('.profile');
+  profileNAV.addEventListener('click', async () => {
+    profileBOX.classList.remove('hidden');
+    await dlay(10);
+    profileBOX.style.translate = '0';
+    profileBOX.style.opacity = '1';
+  })
+  profileUNO.addEventListener('click', async () => {
+    profileBOX.style.translate = '-100vw 0';
+    profileBOX.style.opacity = '0';
+    await dlay(310);
+    profileBOX.classList.add('hidden');
   })
 
   /////////////////////////////////
@@ -106,7 +125,6 @@
 
   /////////////////////////////////
   // Button Swap Pages Handler
-  let dlay = (time) => {return new Promise(resolve => setTimeout(resolve, time));}
   const swap = async (add) => {
     const active = document.querySelector(`.active${add}`);
     const actles = document.querySelector(`.inactive${add}`);
@@ -129,7 +147,9 @@
 
   /////////////////////////////////
   // Fetching Handler
+  let content = '';
   const getQuery = (params,fetched) => {
+    content = '';
     const proxyUrl = 'https://api.allorigins.win/raw?url=';
     const url = 'https://kbbi.web.id/';
 
@@ -139,7 +159,7 @@
         const parser = new DOMParser();
         const htmlDoc = parser.parseFromString(data, 'text/html');
         const queried = htmlDoc.getElementById('d1').innerHTML;
-        let content = '';
+        let tmp = '';
 
         // End in one paragraph
         for (let i = 22; i < queried.length; i++) { 
@@ -149,9 +169,10 @@
             queried[i + 2] == 'r' &&
             queried[i + 3] == '>'
           ) break;
-          else content += queried[i];
-          fetched.innerHTML = content;
+          else tmp += queried[i];
         }
+        content = tmp;
+        fetched.innerHTML = content;
 
         // Search History Input
         const searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
@@ -168,17 +189,26 @@
   /////////////////////////////////
   // Start Query Handler
   await dlay(10);
+  let deg = 0;
   const fetched = document.querySelector('.query');
   const input = document.querySelector('#inputMe');
   const click = document.querySelector('#clickMe');
   const parent = document.querySelector('.home-container');
-  click.addEventListener('click', () => {
+  click.addEventListener('click', async () => {
     try {
       parent.querySelector('.empty').classList.add('hidden');
       parent.querySelector('.query').classList.remove('hidden');
     } catch (err) {}
     
     getQuery(input.value.toLowerCase(),fetched);
+
+    while (content == '') {
+      click.style.color = '#6552E4';
+      await dlay(200);
+      click.style.color = 'inherit';
+      await dlay(200);
+    }
+    click.style.color = 'inherit';
   });
   input.addEventListener('input', () => {
     if(input.value.length == 0) {
