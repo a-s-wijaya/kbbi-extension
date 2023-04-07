@@ -1,11 +1,27 @@
 (async () => {
-  // Always on Top
-  chrome.tabs.onActivated.addListener(function(activeInfo) {
-    chrome.windows.update(activeInfo.windowId, { alwaysOnTop: true });
-  });
-
   const dlay = (time) => {return new Promise(resolve => setTimeout(resolve, time));}
   const container = document.querySelector('.container');
+
+  /////////////////////////////////
+  // Popup Handler
+  const popup = () => {
+    chrome.windows.create({
+      url: "popup.html",
+      type: "popup",
+      width: 365,
+      height: 500,
+      top: 0,
+      left: 0,
+      focused: true
+    });
+  }
+  try {
+    const popupBTN = document.querySelector('.pop-up');
+    popupBTN.addEventListener('click', () => {
+      popup();
+    })
+  } catch (err) {}
+
   /////////////////////////////////
   // Scrollbar Handler
   document.querySelectorAll('.scroll-hover').forEach(item => {
