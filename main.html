@@ -98,37 +98,44 @@
         width: 100%;
         text-align: center;
       }
-      .query::-webkit-scrollbar {
+      .scroll-hover::-webkit-scrollbar {
         width: 5px;
         height: 0px;
         border-radius: 0 10px 0 0;
-        background: #ececed;
+        background: transparent;
       }
-      .query::-webkit-scrollbar-corner {
+      .scroll-hover::-webkit-scrollbar-corner {
         width: 0;
         height: 0;
         background: transparent;
       }
-      .query::-webkit-scrollbar-button {
+      .scroll-hover::-webkit-scrollbar-button {
         width: 0;
         height: 0;
         background: transparent;
       }
-      .query::-webkit-scrollbar-track-piece {
+      .scroll-hover::-webkit-scrollbar-track-piece {
         width: 0;
         height: 0;
         background: transparent;
       }
-      .query::-webkit-scrollbar-track {
+      .scroll-hover::-webkit-scrollbar-track {
         width: 0;
         height: 0;
         background: transparent;
       }
-      .query::-webkit-scrollbar-thumb {
+      .scroll-hover::-webkit-scrollbar-thumb {
         border-radius: 20px;
         -webkit-transition: 0.3s;
         transition: 0.3s;
-        background: #b6b7c6;
+        background: transparent;
+      }
+      
+      .scroll-on::-webkit-scrollbar {
+        background: #ececed !important;
+      }
+      .scroll-on::-webkit-scrollbar-thumb {
+        background: #b6b7c6 !important;
       }
 
 
@@ -232,7 +239,7 @@
             </div>
 
             <!-- Query Holder -->
-            <div class="col query hidden">
+            <div class="col query hidden scroll-hover">
             </div>
           </div>
 
@@ -246,7 +253,7 @@
             </div>
             
             <!-- Queried History Holder -->
-            <div class="col query hidden">
+            <div class="col query hidden scroll-hover">
               <div class="row history-list">
                 <p class="history-prev"></p>
                 <em class="history-sub"></em>

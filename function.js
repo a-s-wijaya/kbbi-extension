@@ -1,5 +1,15 @@
 (async () => {
   const container = document.querySelector('.container');
+  /////////////////////////////////
+  // Scrollbar Handler
+  document.querySelectorAll('.scroll-hover').forEach(item => {
+    item.addEventListener('mouseover', () => {
+      item.classList.add('scroll-on');
+    })
+    item.addEventListener('mouseout', () => {
+      item.classList.remove('scroll-on');
+    })
+  })
 
   /////////////////////////////////
   // History Handler
