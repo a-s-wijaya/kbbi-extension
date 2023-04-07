@@ -4,23 +4,23 @@
 
   /////////////////////////////////
   // Popup Handler
-  const popup = () => {
-    chrome.windows.create({
-      url: "popup.html",
-      type: "popup",
-      width: 365,
-      height: 500,
-      top: 0,
-      left: 0,
-      focused: true
-    });
-  }
-  try {
-    const popupBTN = document.querySelector('.pop-up');
-    popupBTN.addEventListener('click', () => {
-      popup();
-    })
-  } catch (err) {}
+  // const popup = () => {
+  //   chrome.windows.create({
+  //     url: "popup.html",
+  //     type: "popup",
+  //     width: 365,
+  //     height: 500,
+  //     top: 0,
+  //     left: 0,
+  //     focused: true
+  //   });
+  // }
+  // try {
+  //   const popupBTN = document.querySelector('.pop-up');
+  //   popupBTN.addEventListener('click', () => {
+  //     popup();
+  //   })
+  // } catch (err) {}
 
   /////////////////////////////////
   // Scrollbar Handler
@@ -118,8 +118,6 @@
           
           (() => {
             title = title.slice(3,title.length-4);
-            // console.log(title);
-            console.log(subtl)
           })();
           
           ////////////////////////////////
@@ -175,7 +173,7 @@
     const proxyUrl = 'https://api.allorigins.win/raw?url=';
     const url = 'https://kbbi.web.id/';
 
-    fetch(proxyUrl + encodeURIComponent(url) + params)
+    fetch(proxyUrl + url + params)
       .then(response => response.text())
       .then(data => {
         const parser = new DOMParser();
