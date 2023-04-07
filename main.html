@@ -79,6 +79,13 @@
       .home-container {
         width: 100%;
       }
+      .home-container>.query {
+        margin-top: 20px;
+        height: 220px;
+        padding: 10px;
+        overflow: scroll;
+        text-align: left;
+      }
       .empty>p {
         color: #4B4E53;
         font-size: 13px;
@@ -91,13 +98,6 @@
         width: 100%;
         text-align: center;
       }
-      .query {
-        margin-top: 20px;
-        height: 220px;
-        padding: 10px;
-        overflow: scroll;
-        text-align: left;
-      }
       .query::-webkit-scrollbar {
         width: 5px;
         height: 0px;
@@ -105,24 +105,66 @@
         background: #ececed;
       }
       .query::-webkit-scrollbar-corner {
+        width: 0;
+        height: 0;
         background: transparent;
       }
       .query::-webkit-scrollbar-button {
+        width: 0;
+        height: 0;
         background: transparent;
       }
       .query::-webkit-scrollbar-track-piece {
+        width: 0;
+        height: 0;
         background: transparent;
       }
       .query::-webkit-scrollbar-track {
+        width: 0;
+        height: 0;
         background: transparent;
       }
       .query::-webkit-scrollbar-thumb {
         border-radius: 20px;
-        margin-left: 5px;
         -webkit-transition: 0.3s;
         transition: 0.3s;
         background: #b6b7c6;
       }
+
+
+
+
+      .history-container>.query {
+        padding: 0 0 10px 5px;
+        overflow: scroll;
+        margin-top: -10px;
+        height: 290px;
+        width: 100%;
+      }
+      .history-list {
+        width: 100%;
+        padding: 10px 0 13px 0;
+        margin: 0 0 10px 0 !important;
+        font-size: 14px;
+        text-align: left;
+        border-radius: 5px;
+        border: solid 1px #F1F1F1 !important;
+      }
+      .history-list>em {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .history-list>p {
+        margin-bottom: 3px;
+      }
+
+      .history-sub {
+        font-size: 12px;
+      }
+
+
 
 
 
@@ -204,9 +246,14 @@
             </div>
             
             <!-- Queried History Holder -->
-            <div class="col">
-              
+            <div class="col query hidden">
+              <div class="row history-list">
+                <p class="history-prev"></p>
+                <em class="history-sub"></em>
+                <p class="history-show hidden"></p>
+              </div>
             </div>
+
           </div>
         </div>
         

@@ -1,6 +1,6 @@
 {
-  "name": "Hello Extensions",
-  "description": "Base Level Extension",
+  "name": "KBBI Extensions",
+  "description": "Search for any Thesaurus",
   "version": "1.0",
   "manifest_version": 3,
   "action": {
