@@ -1,4 +1,9 @@
 (async () => {
+  // Always on Top
+  chrome.tabs.onActivated.addListener(function(activeInfo) {
+    chrome.windows.update(activeInfo.windowId, { alwaysOnTop: true });
+  });
+
   const dlay = (time) => {return new Promise(resolve => setTimeout(resolve, time));}
   const container = document.querySelector('.container');
   /////////////////////////////////
@@ -14,6 +19,7 @@
 
   /////////////////////////////////
   // Profile Handler
+  await dlay(10);
   const profileNAV = document.querySelector('#profile-nav');
   const profileUNO = document.querySelector('#profile-back');
   const profileBOX = document.querySelector('.profile');
@@ -189,7 +195,6 @@
   /////////////////////////////////
   // Start Query Handler
   await dlay(10);
-  let deg = 0;
   const fetched = document.querySelector('.query');
   const input = document.querySelector('#inputMe');
   const click = document.querySelector('#clickMe');
@@ -203,10 +208,10 @@
     getQuery(input.value.toLowerCase(),fetched);
 
     while (content == '') {
-      click.style.color = '#6552E4';
-      await dlay(200);
+      click.style.color = 'transparent';
+      await dlay(300);
       click.style.color = 'inherit';
-      await dlay(200);
+      await dlay(300);
     }
     click.style.color = 'inherit';
   });
