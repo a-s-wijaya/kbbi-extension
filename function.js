@@ -79,9 +79,24 @@
         const parser = new DOMParser();
         const htmlDoc = parser.parseFromString(data, 'text/html');
         try {
-          const queried = htmlDoc.getElementById('d1').innerHTML;
-          let tmps = '';
+          const result = htmlDoc.getElementById('d1');
+          
+          if (result.children.length == 0 || result == null) {
+            const parent = document.querySelector('.home-container');
+            const notFound = parent.querySelector('.not-found');
+            notFound.classList.remove('hidden');
 
+            const empty = parent.querySelector('.empty');
+            const query = parent.querySelector('.query');
+            empty.classList.add('hidden');
+            query.classList.add('hidden');
+
+            content = 'fail'; 
+            return content
+          }
+
+          const queried = result.innerHTML;
+          let tmps = '';
           // End in one paragraph
           for (let i = 22; i < queried.length; i++) { 
             if (
@@ -124,7 +139,7 @@
               //////////
               // Found ';' => Stop
               if (((k == content.length-1) && tmp.length > 0) ||
-                (SoN(k-1,'<b>', content) && tmp.length > 4)|| 
+                (SoN(k-1,'<b>', content) && tmp.length > 5)|| 
                 (SoN(k-1,'</em>', content) && tmp.length > 15)
                 
                 && tmp != '' && act == true) { 
@@ -148,6 +163,8 @@
             })();
           }
 
+          console.log(subtl);
+          console.log(content);
           
           if (title.startsWith('>')) title = title.substring(1);
           const titled = document.createElement('h2');
@@ -194,9 +211,7 @@
   const historyEmpty = document.querySelector('.history-container .empty');
   const historyQuery = document.querySelector('.history-container .query');
   const dataHistory = () => {
-    
     const storage = JSON.parse(localStorage.getItem('searchHistory')) || [];
-    
     try {
       if(storage.length > 0) {
         // Hide Empty History Page
@@ -271,7 +286,6 @@
   }
   const dataDirect = () => {
     const storage = JSON.parse(localStorage.getItem('searchHistory')) || [];
-
     try {
       if(storage.length > 0) {
         document.querySelectorAll('.history-list').forEach((item,i) => {
@@ -329,6 +343,7 @@
   const parent = document.querySelector('.home-container');
   click.addEventListener('click', async () => {
     try {
+      parent.querySelector('.not-found').classList.add('hidden');
       parent.querySelector('.empty').classList.add('hidden');
       parent.querySelector('.query').classList.remove('hidden');
     } catch (err) {}
@@ -345,8 +360,10 @@
   });
   input.addEventListener('input', () => {
     if(input.value.length == 0) {
-    parent.querySelector('.empty').classList.remove('hidden');
-    parent.querySelector('.query').classList.add('hidden');
+      parent.querySelector('.not-found').classList.add('hidden');
+      
+      parent.querySelector('.query').classList.add('hidden');
+      parent.querySelector('.empty').classList.remove('hidden');
     }
   })
   input.addEventListener("keypress", (event) => {
