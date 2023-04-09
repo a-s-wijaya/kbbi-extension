@@ -4,23 +4,23 @@
 
   /////////////////////////////////
   // Popup Handler
-  // const popup = () => {
-  //   chrome.windows.create({
-  //     url: "popup.html",
-  //     type: "popup",
-  //     width: 365,
-  //     height: 500,
-  //     top: 0,
-  //     left: 0,
-  //     focused: true
-  //   });
-  // }
-  // try {
-  //   const popupBTN = document.querySelector('.pop-up');
-  //   popupBTN.addEventListener('click', () => {
-  //     popup();
-  //   })
-  // } catch (err) {}
+  const popup = () => {
+    chrome.windows.create({
+      url: "popup.html",
+      type: "popup",
+      width: 365,
+      height: 500,
+      top: 0,
+      left: 0,
+      focused: true
+    });
+  }
+  try {
+    const popupBTN = document.querySelector('.pop-up');
+    popupBTN.addEventListener('click', () => {
+      popup();
+    })
+  } catch (err) {}
 
   /////////////////////////////////
   // Scrollbar Handler
@@ -52,73 +52,202 @@
     profileBOX.classList.add('hidden');
   })
 
+  ///////////////
+  // Divider
+  const SoN = (k, req, text) => { 
+    let res = false;
+    let lng = req.length;
+    for (let m = 0; m < lng; m++) { 
+      if (text[k-m] == req[lng-m-1]) res = true;
+      else return false;
+    }
+    return res;
+  }
+
+  /////////////////////////////////
+  // Fetching Handler
+  let content = '';
+  const getQuery = (params,fetched) => {
+    content = '';
+    fetched.innerHTML = '';
+    const proxyUrl = 'https://api.allorigins.win/raw?url=';
+    const url = 'https://kbbi.web.id/';
+
+    fetch(proxyUrl + url + params)
+      .then(response => response.text())
+      .then(data => {
+        const parser = new DOMParser();
+        const htmlDoc = parser.parseFromString(data, 'text/html');
+        try {
+          const queried = htmlDoc.getElementById('d1').innerHTML;
+          let tmps = '';
+
+          // End in one paragraph
+          for (let i = 22; i < queried.length; i++) { 
+            if (
+              queried[i + 0] == '<' &&
+              queried[i + 1] == 'b' &&
+              queried[i + 2] == 'r' &&
+              queried[i + 3] == '>'
+            ) break;
+            else tmps += queried[i];
+          }
+          content = tmps;
+
+          // Search History Input
+          const searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];          
+          const index = searchHistory.indexOf(content);
+          if (index !== -1) searchHistory.splice(index, 1);
+          localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+
+          let legal = 0,
+              subtl = [],
+              title = '',
+              tmp   = '',
+              exc   = true,
+              act   = false;
+        
+          for (let k = 0; k < content.length; k++) {
+            //////////
+            // Title, if it was the first word that located between first <b></b>
+            (() => {
+              if (SoN(k-1,'</b>', content) && exc == true) {exc = false; legal = k}
+              else if (exc == true) title += content[k];
+            })();
+
+            //////////
+            // Subtitle, if it was located between two (") and there's no slash
+            (() => {
+              //////////
+              // Found '</em>' => Allow
+              if (SoN(k-1,'</em>', content) && subtl.length < 4 && tmp == '') {
+                act = true;
+              } 
+              if (SoN(k-1,'</b>', content) && (exc == false) && (tmp == '') && (k > legal) && (subtl.length < 4)) {
+                act = true;
+              }
+      
+              //////////
+              // Found ';' => Stop
+              if (((k == content.length-1) && tmp.length > 0) ||
+                (SoN(k-1,'<b>', content) && tmp.length > 4)|| 
+                (SoN(k-1,'</em>', content) && tmp.length > 15)
+                
+                && tmp != '' && act == true) { 
+                subtl.push(tmp);
+                act = false;
+                tmp = '';
+              }
+
+              //////////
+              // Found </b> => Reset
+              if (SoN(k-1,'</b>', content)) {tmp = '';} 
+
+              //////////
+              // Found ':' => Space
+              if (act == true && content[k-1] == ':') tmp += '<br>';
+                
+              //////////
+              // Allowed => Insert
+              if (act == true) tmp += content[k];
+
+            })();
+          }
+
+          
+          if (title.startsWith('>')) title = title.substring(1);
+          const titled = document.createElement('h2');
+          titled.innerHTML = title;
+
+          const subtitles = document.createElement('div');
+          
+          subtl.forEach((item,i) => {
+            const subtitle = document.createElement('div');
+            subtitle.classList.add('row');
+            
+            const num = document.createElement('div');
+            num.style.width = '5%';
+            num.innerHTML = `<b>${i+1}</b>`;
+
+            const box = document.createElement('div');
+            box.style.width = '90%';
+            const text = document.createElement('p');
+            text.innerHTML = item;
+            box.appendChild(text);
+
+            subtitle.appendChild(num);
+            subtitle.appendChild(box);
+            subtitles.appendChild(subtitle);
+          })
+
+          fetched.appendChild(titled);
+          fetched.appendChild(subtitles);
+          
+          const store = [content,fetched.innerHTML]
+          searchHistory.unshift(store);
+          localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+        } catch (err) {
+        }
+      })
+  }
+
   /////////////////////////////////
   // History Handler
   const historyEmpty = document.querySelector('.history-container .empty');
   const historyQuery = document.querySelector('.history-container .query');
-  const  dataHistory = () => {
-    const searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
-    if (searchHistory.length != 0) {
-      try {
+  const dataHistory = () => {
+    
+    const storage = JSON.parse(localStorage.getItem('searchHistory')) || [];
+    
+    try {
+      if(storage.length > 0) {
         // Hide Empty History Page
         historyEmpty.classList.add('hidden');
         historyQuery.classList.remove('hidden');
 
         let historyList = '';
 
-        for (let i = 0; i < searchHistory.length; i++) {
-          const check = searchHistory[i];
-
-          ///////////////////////////
-          // Separate Word Sections
-          /* -- Word Slicer -- */
-          const SoN = (k, req) => { 
-            let res = false;
-            let lng = req.length;
-                     
-            for (let m = 0; m < lng; m++) { 
-              if (check[k-m] == req[lng-m-1]) res = true;
-              else return false;
-            }
-
-            return res;
-          }
+        for (let i = 0; i < storage.length; i++) {
+          const text = storage[i][0];
           let title = '',
               subtl = '',
-              exc   = true,
               tmp   = '',
+              exc   = true,
               act   = false;
-
-          for (let k = 0; k < check.length; k++) {
+        
+          for (let k = 0; k < text.length; k++) {
+            //////////
             // Title, if it was the first word that located between first <b></b>
             (() => {
-              if (SoN(k-1,'</b>')) exc = false;
-              else if (exc == true) title += check[k];
+              if (SoN(k-1,'</b>', text)) exc = false;
+              else if (exc == true) title += text[k];
             })();
-
+        
+            //////////
             // Subtitle, if it was located between two (") and there's no slash
             (() => {
+              //////////
               // Found '</em>' => Allow
-              if (SoN(k-1,'</em>')) {act = true;}
-
+              if (SoN(k-1,'</em>', text)) {act = true;} 
+      
+              //////////
               // Found ';' or ':' => Stop
-              if ((check[k] == ';' || check[k] == ':') && tmp != '') {
+              if ((text[k] == ';' || text[k] == ':') && tmp != '') { 
                 tmp += ';';
                 subtl += tmp;
                 act = false;
                 tmp = '';
               }
-
-              if (check[k-1] == '>') tmp = '';
+      
+              //////////
+              // Found '>' => Reset
+              if (text[k-1] == '>') tmp = '';
                 
+              //////////
               // Allowed => insert
-              if (act == true) tmp += check[k];
+              if (act == true) tmp += text[k];
             })();
           }
-          
-          (() => {
-            title = title.slice(3,title.length-4);
-          })();
           
           ////////////////////////////////
           // Push all Contents
@@ -133,14 +262,42 @@
             </em>
 
             <p class="history-show hidden">
-              ${check}
+              ${text}
             </p>
           </div>
           `;
         }
         historyQuery.innerHTML = historyList;
-      } catch (err) {}
-    }
+      }
+    } catch (err) {}
+  }
+  const dataDirect = () => {
+    const storage = JSON.parse(localStorage.getItem('searchHistory')) || [];
+
+    try {
+      if(storage.length > 0) {
+        document.querySelectorAll('.history-list').forEach((item,i) => {
+          item.addEventListener('click', async () => {
+            const requery = document.querySelector('.requery');
+            requery.classList.remove('hidden');
+            await dlay(10);
+            requery.style.translate = '0';
+            requery.style.opacity = '1';
+  
+            const requeryBack = document.querySelector('#requery-back');
+            requeryBack.addEventListener('click', async () => {
+              requery.style.translate = '-100vw 0';
+              requery.style.opacity = '0';
+              await dlay(310);
+              requery.classList.add('hidden');
+            })
+  
+            const requeryBody = document.querySelector('.requery-body');
+            requeryBody.innerHTML = storage[i][1];
+          })
+        })
+      }
+    } catch (err) {}
   }
 
   /////////////////////////////////
@@ -159,57 +316,16 @@
 
   document.querySelectorAll('.navButton').forEach((item,i) => {
     item.addEventListener('click', () => {
-      if(i == 1) dataHistory();
+      if(i == 1) {dataHistory();dataDirect();}
       swap('BTN');
       swap('PGS');
     })
   })
 
   /////////////////////////////////
-  // Fetching Handler
-  let content = '';
-  const getQuery = (params,fetched) => {
-    content = '';
-    const proxyUrl = 'https://api.allorigins.win/raw?url=';
-    const url = 'https://kbbi.web.id/';
-
-    fetch(proxyUrl + url + params)
-      .then(response => response.text())
-      .then(data => {
-        const parser = new DOMParser();
-        const htmlDoc = parser.parseFromString(data, 'text/html');
-        const queried = htmlDoc.getElementById('d1').innerHTML;
-        let tmp = '';
-
-        // End in one paragraph
-        for (let i = 22; i < queried.length; i++) { 
-          if (
-            queried[i + 0] == '<' &&
-            queried[i + 1] == 'b' &&
-            queried[i + 2] == 'r' &&
-            queried[i + 3] == '>'
-          ) break;
-          else tmp += queried[i];
-        }
-        content = tmp;
-        fetched.innerHTML = content;
-
-        // Search History Input
-        const searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
-        const index = searchHistory.indexOf(content);
-        if (index !== -1) {
-          searchHistory.splice(index, 1);
-        }
-        searchHistory.unshift(content);
-        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-      })
-      .catch(error => console.log(error));
-  }
-
-  /////////////////////////////////
   // Start Query Handler
   await dlay(10);
-  const fetched = document.querySelector('.query');
+  const fetched = document.querySelector('.home-query');
   const input = document.querySelector('#inputMe');
   const click = document.querySelector('#clickMe');
   const parent = document.querySelector('.home-container');
@@ -231,10 +347,14 @@
   });
   input.addEventListener('input', () => {
     if(input.value.length == 0) {
-      try {
-        parent.querySelector('.empty').classList.remove('hidden');
-        parent.querySelector('.query').classList.add('hidden');
-      } catch (err) {}
+    parent.querySelector('.empty').classList.remove('hidden');
+    parent.querySelector('.query').classList.add('hidden');
     }
   })
+  input.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      click.click();
+    }
+  });
 })();
