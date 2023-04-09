@@ -94,12 +94,6 @@
           }
           content = tmps;
 
-          // Search History Input
-          const searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];          
-          const index = searchHistory.indexOf(content);
-          if (index !== -1) searchHistory.splice(index, 1);
-          localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-
           let legal = 0,
               subtl = [],
               title = '',
@@ -182,12 +176,16 @@
 
           fetched.appendChild(titled);
           fetched.appendChild(subtitles);
+          const store = [content,fetched.innerHTML,title]
           
-          const store = [content,fetched.innerHTML]
+          // Search History Input
+          const searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];  
+          const index = searchHistory.findIndex(member => member.includes(title));
+          if (index !== -1) searchHistory.splice(index, 1);
+
           searchHistory.unshift(store);
           localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-        } catch (err) {
-        }
+        } catch (err) {console.log(err)}
       })
   }
 
